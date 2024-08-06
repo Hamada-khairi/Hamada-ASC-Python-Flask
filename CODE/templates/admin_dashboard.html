@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-purple-400 mb-8 text-center animate-fade-in-down">Admin Dashboard</h1>
+    
+    <div class="mb-8 animate-fade-in" style="animation-delay: 0.2s;">
+        <a href="{{ url_for('admin_create_user') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 inline-flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Create New User
+        </a>
+    </div>
+    
+    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fade-in transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105" style="animation-delay: 0.4s;">
+        <div class="p-6">
+            <h2 class="text-2xl font-bold text-purple-400 mb-4">User Accounts</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto user-accounts-table">
+                    <thead>
+                        <tr class="bg-purple-700 text-purple-200">
+                            <th class="px-4 py-2 text-left">Username</th>
+                            <th class="px-4 py-2 text-left">Name</th>
+                            <th class="px-4 py-2 text-left">Account Type</th>
+                            <th class="px-4 py-2 text-right">Balance</th>
+                            <th class="px-4 py-2 text-right">Loan Amount</th>
+                            <th class="px-4 py-2 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr class="{% if loop.index % 2 == 0 %}bg-gray-700{% else %}bg-gray-600{% endif %} hover:bg-gray-500 transition-colors duration-200">
+                            <td class="px-4 py-2 text-purple-200">{{ user.username }}</td>
+                            <td class="px-4 py-2 text-purple-200">{{ user.first_name }} {{ user.last_name }}</td>
+                            <td class="px-4 py-2 text-purple-200">{{ user.account_type }}</td>
+                            <td class="px-4 py-2 text-right text-purple-200">RM {{ "%.2f"|format(user.balance) }}</td>
+                            <td class="px-4 py-2 text-right text-purple-200">RM {{ "%.2f"|format(user.loan_amount) }}</td>
+                            <td class="px-4 py-2 text-center">
+                                <a href="#" class="text-blue-400 hover:text-blue-300 mr-2 transition-colors duration-200 hover:-translate-y-1 hover:scale-105 inline-block">Edit</a>
+                                <a href="#" class="text-red-400 hover:text-red-300 transition-colors duration-200 hover:-translate-y-1 hover:scale-105 inline-block">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in" style="animation-delay: 0.6s;">
+        <div class="bg-purple-700 rounded-xl shadow-lg p-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 animate-fade-in" style="animation-delay: 0.6s;">
+            <h3 class="text-xl font-bold text-purple-200 mb-2">Total Users</h3>
+            <p class="text-3xl font-bold text-white">{{ users|length }}</p>
+        </div>
+        <div class="bg-blue-700 rounded-xl shadow-lg p-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 animate-fade-in" style="animation-delay: 0.8s;">
+            <h3 class="text-xl font-bold text-blue-200 mb-2">Total Balance</h3>
+            <p class="text-3xl font-bold text-white">RM {{ "%.2f"|format(users|sum(attribute='balance')) }}</p>
+        </div>
+        <div class="bg-green-700 rounded-xl shadow-lg p-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 animate-fade-in" style="animation-delay: 1s;">
+            <h3 class="text-xl font-bold text-green-200 mb-2">Total Loans</h3>
+            <p class="text-3xl font-bold text-white">RM {{ "%.2f"|format(users|sum(attribute='loan_amount')) }}</p>
+        </div>
+        <div class="bg-pink-700 rounded-xl shadow-lg p-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 animate-fade-in" style="animation-delay: 1.2s;">
+            <h3 class="text-xl font-bold text-pink-200 mb-2">Admin Users</h3>
+            <p class="text-3xl font-bold text-white">{{ users|selectattr('is_admin', 'equalto', true)|list|length }}</p>
+        </div>
+    </div>
+    
+    <!-- Add the new Log Visualization section -->
+    <div class="mt-12 animate-fade-in" style="animation-delay: 1.4s;">
+        <h2 class="text-3xl font-bold text-purple-400 mb-6">Log Visualization</h2>
+        <div id="log-visualization" class="animate-fade-in" style="animation-delay: 1.6s;"></div>
+    </div>
+</div>
+
+<style>
+
+
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translate3d(0, -30px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+th.asc .ml-1::after {
+    content: '▲';
+}
+
+th.desc .ml-1::after {
+    content: '▼';
+}
+
+th {
+    position: relative;
+}
+
+th .ml-1 {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.animate-fade-in-down { animation: fadeInDown 0.8s ease-out; }
+.animate-fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+
+input, select {
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    transform: scale(1.02);
+}
+
+th.cursor-pointer:hover {
+    cursor: pointer;
+    background-color: #7c3aed;
+}
+
+/* Add this new style for table rows */
+tbody tr {
+    transition: all 0.3s ease-in-out;
+}
+
+tbody tr:hover {
+    transform: translateY(-2px) scale(1.01);
+}
+
+/* Remove hover effects from User Accounts table rows */
+.user-accounts-table tbody tr {
+    transition: none;
+}
+
+.user-accounts-table tbody tr:hover {
+    transform: none;
+    background-color: inherit; /* This ensures the background doesn't change on hover */
+}
+
+/* If you want to keep the alternating row colors without hover effect */
+.user-accounts-table tbody tr:nth-child(even) {
+    background-color: rgba(75, 85, 99, 1); /* bg-gray-700 */
+}
+
+.user-accounts-table tbody tr:nth-child(odd) {
+    background-color: rgba(55, 65, 81, 1); /* bg-gray-800 */
+}
+
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = document.querySelector('table');
+        const headers = table.querySelectorAll('th');
+        const tableBody = table.querySelector('tbody');
+        const rows = tableBody.querySelectorAll('tr');
+    
+        const directions = Array.from(headers).map(() => '');
+    
+        const sortColumn = (index) => {
+            const direction = directions[index] || 'asc';
+            const multiplier = (direction === 'asc') ? 1 : -1;
+            const newRows = Array.from(rows);
+    
+            newRows.sort((rowA, rowB) => {
+                const cellA = rowA.querySelectorAll('td')[index].textContent.trim();
+                const cellB = rowB.querySelectorAll('td')[index].textContent.trim();
+    
+                switch(index) {
+                    case 3: // Balance column
+                    case 4: // Loan Amount column
+                        return (
+                            parseFloat(cellA.replace('RM ', '')) -
+                            parseFloat(cellB.replace('RM ', ''))
+                        ) * multiplier;
+                    default:
+                        return cellA.localeCompare(cellB) * multiplier;
+                }
+            });
+    
+            [].forEach.call(rows, (row) => {
+                tableBody.removeChild(row);
+            });
+    
+            newRows.forEach(newRow => tableBody.appendChild(newRow));
+    
+            directions[index] = direction === 'asc' ? 'desc' : 'asc';
+    
+            headers.forEach((header, i) => {
+                header.classList.remove('asc', 'desc');
+                if (i === index) {
+                    header.classList.add(directions[i]);
+                }
+            });
+        }
+    
+        headers.forEach((header, index) => {
+            header.addEventListener('click', () => {
+                sortColumn(index);
+            });
+            
+            // Add sorting indicators and hover effect
+            header.classList.add('cursor-pointer', 'hover:bg-purple-600', 'transition-colors', 'duration-300');
+            header.innerHTML += '<span class="ml-1">↕️</span>';
+        });
+    });
+</script>
+
+<script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+<!-- Log Visualization Component -->
+<script type="text/babel">
+
+
+const LogVisualization = () => {
+    const [logs, setLogs] = React.useState([]);
+    const [filteredLogs, setFilteredLogs] = React.useState([]);
+    const [stats, setStats] = React.useState({
+        totalRequests: 0,
+        uniqueIPs: 0,
+        registrations: 0,
+        logins: 0,
+        failedLogins: 0
+    });
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const [filterLevel, setFilterLevel] = React.useState("ALL");
+    const [itemsPerPage, setItemsPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+
+    React.useEffect(() => {
+        fetch('/api/admin/logs')
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                setLogs(data);
+                setFilteredLogs(data);
+                calculateStats(data);
+                setLoading(false);
+            })
+            .catch(e => {
+                console.error("Error fetching logs:", e);
+                setError("Failed to load logs. Please try again later.");
+                setLoading(false);
+            });
+    }, []);
+
+    React.useEffect(() => {
+        const filtered = logs.filter(log => 
+            (filterLevel === "ALL" || log.level === filterLevel) &&
+            (log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             log.ip.includes(searchTerm) ||
+             log.method.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             log.path.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+        setFilteredLogs(filtered);
+        setCurrentPage(1);
+    }, [searchTerm, filterLevel, logs]);
+
+    const calculateStats = (logData) => {
+        setStats({
+            totalRequests: logData.length,
+            uniqueIPs: new Set(logData.map(log => log.ip)).size,
+            registrations: logData.filter(log => log.message.includes('New user registered')).length,
+            logins: logData.filter(log => log.message.includes('logged in successfully')).length,
+            failedLogins: logData.filter(log => log.message.includes('Failed login attempt')).length
+        });
+    };
+
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleFilterChange = (event) => {
+        setFilterLevel(event.target.value);
+    };
+
+    const handleItemsPerPageChange = (event) => {
+        setItemsPerPage(Number(event.target.value));
+        setCurrentPage(1);
+    };
+
+    const pageCount = Math.ceil(filteredLogs.length / itemsPerPage);
+    const paginatedLogs = filteredLogs.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    if (loading) return <div className="text-white">Loading logs...</div>;
+    if (error) return <div className="text-red-500">{error}</div>;
+    if (!logs || logs.length === 0) return <div className="text-white">No logs found.</div>;
+
+    return (
+        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                <div className="bg-purple-700 p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold text-purple-200">Total Requests</h3>
+                    <p className="text-2xl font-bold text-white">{stats.totalRequests}</p>
+                </div>
+                <div className="bg-blue-700 p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold text-blue-200">Unique IPs</h3>
+                    <p className="text-2xl font-bold text-white">{stats.uniqueIPs}</p>
+                </div>
+                <div className="bg-green-700 p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold text-green-200">Registrations</h3>
+                    <p className="text-2xl font-bold text-white">{stats.registrations}</p>
+                </div>
+                <div className="bg-yellow-600 p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold text-yellow-200">Successful Logins</h3>
+                    <p className="text-2xl font-bold text-white">{stats.logins}</p>
+                </div>
+                <div className="bg-red-700 p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold text-red-200">Failed Logins</h3>
+                    <p className="text-2xl font-bold text-white">{stats.failedLogins}</p>
+                </div>
+            </div>
+            <div className="mb-4 flex flex-wrap items-center gap-4">
+                <input
+                    type="text"
+                    placeholder="Search logs..."
+                    className="p-2 rounded bg-gray-700 text-white"
+                    onChange={handleSearch}
+                />
+                <select
+                    className="p-2 rounded bg-gray-700 text-white"
+                    onChange={handleFilterChange}
+                    value={filterLevel}
+                >
+                    <option value="ALL">All Levels</option>
+                    <option value="INFO">Info</option>
+                    <option value="WARNING">Warning</option>
+                    <option value="ERROR">Error</option>
+                </select>
+                <select
+                    className="p-2 rounded bg-gray-700 text-white"
+                    onChange={handleItemsPerPageChange}
+                    value={itemsPerPage}
+                >
+                    <option value="10">Show 10</option>
+                    <option value="25">Show 25</option>
+                    <option value="50">Show 50</option>
+                    <option value="100">Show 100</option>
+                    <option value={filteredLogs.length}>Show All</option>
+                </select>
+            </div>
+            <div className="overflow-x-auto">
+                <table className="w-full table-auto">
+                    <thead>
+                        <tr className="bg-purple-700 text-purple-200">
+                            <th className="px-4 py-2 text-left">Timestamp</th>
+                            <th className="px-4 py-2 text-left">Level</th>
+                            <th className="px-4 py-2 text-left">Message</th>
+                            <th className="px-4 py-2 text-left">IP</th>
+                            <th className="px-4 py-2 text-left">Method</th>
+                            <th className="px-4 py-2 text-left">Path</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {paginatedLogs.map((log, index) => (
+                            <tr key={index} className={index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'}>
+                                <td className="px-4 py-2 text-purple-200">{log.timestamp}</td>
+                                <td className="px-4 py-2 text-purple-200">{log.level}</td>
+                                <td className="px-4 py-2 text-purple-200">{log.message}</td>
+                                <td className="px-4 py-2 text-purple-200">{log.ip}</td>
+                                <td className="px-4 py-2 text-purple-200">{log.method || 'N/A'}</td>
+                                <td className="px-4 py-2 text-purple-200">{log.path || 'N/A'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div className="mt-4 flex justify-between items-center">
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 bg-purple-600 text-white rounded disabled:bg-gray-400"
+                >
+                    Previous
+                </button>
+                <span className="text-white">
+                    Page {currentPage} of {pageCount}
+                </span>
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount))}
+                    disabled={currentPage === pageCount}
+                    className="px-4 py-2 bg-purple-600 text-white rounded disabled:bg-gray-400"
+                >
+                    Next
+                </button>
+            </div>
+        </div>
+    );
+};
+
+try {
+    ReactDOM.render(<LogVisualization />, document.getElementById('log-visualization'));
+} catch (error) {
+    console.error("Error rendering LogVisualization:", error);
+    document.getElementById('log-visualization').innerHTML = '<p class="text-red-500">Error rendering log visualization. Please check the console for details.</p>';
+}
+
+</script>
+{% endblock %}

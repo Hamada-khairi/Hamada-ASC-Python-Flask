@@ -1,0 +1,48 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --primary: #6D28D9;
+  --primary-dark: #5B21B6;
+  --secondary: #EC4899;
+  --secondary-dark: #DB2777;
+}
+
+.dark {
+  --bg-primary: #1F2937;
+  --bg-secondary: #374151;
+  --text-primary: #F3F4F6;
+  --text-secondary: #E5E7EB;
+}
+
+.light {
+  --bg-primary: #F3F4F6;
+  --bg-secondary: #E5E7EB;
+  --text-primary: #1F2937;
+  --text-secondary: #374151;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-primary {
+  @apply bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105;
+}
+
+.btn-secondary {
+  @apply bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105;
+}
+
+.input-field {
+  @apply w-full px-3 py-2 border rounded text-gray-700 dark:text-white bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600;
+}
+
+
+.card {
+  @apply bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl;
+}
+
+
+

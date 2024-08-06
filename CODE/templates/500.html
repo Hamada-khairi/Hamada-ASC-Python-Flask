@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 Internal Server Error - Hamada Bank System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-purple-900 to-purple-700 min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-lg w-full bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-8">
+            <div class="flex justify-center mb-8">
+                <svg class="w-32 h-32 text-purple-400 animate-float" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h1 class="text-4xl font-bold text-center text-purple-400 mb-4">500 Error</h1>
+            <h2 class="text-2xl font-semibold text-center text-gray-300 mb-8">Internal Server Error</h2>
+            <p class="text-gray-400 text-center mb-8">Oops! Something went wrong on our end. We're working to fix the issue.</p>
+            <div class="flex justify-center">
+                <a href="{{ url_for('home') }}" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 inline-flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const errorIcon = document.querySelector('svg');
+            errorIcon.addEventListener('click', () => {
+                errorIcon.classList.add('animate-spin');
+                setTimeout(() => {
+                    errorIcon.classList.remove('animate-spin');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-indigo-400 mb-8 text-center animate-fade-in-down">Transaction History</h1>
+    
+    <div class="bg-indigo-800 p-8 rounded-xl shadow-lg overflow-x-auto animate-fade-in">
+        <table class="w-full table-auto">
+            <thead>
+                <tr class="bg-indigo-700 text-indigo-200">
+                    <th class="px-4 py-2 text-left">Date</th>
+                    <th class="px-4 py-2 text-left">Type</th>
+                    <th class="px-4 py-2 text-right">Amount</th>
+                    <th class="px-4 py-2 text-right">Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr class="{% if loop.index % 2 == 0 %}bg-indigo-700 bg-opacity-50{% else %}bg-indigo-800{% endif %} text-indigo-100">
+                    <td class="px-4 py-2">{{ transaction.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td class="px-4 py-2 flex items-center">
+                        {% if transaction.transaction_type == 'Deposit' %}
+                            <svg class="w-5 h-5 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        {% elif transaction.transaction_type == 'Withdraw' %}
+                            <svg class="w-5 h-5 mr-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                            </svg>
+                        {% else %}
+                            <svg class="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                        {% endif %}
+                        {{ transaction.transaction_type }}
+                    </td>
+                    <td class="px-4 py-2 text-right">RM {{ "%.2f"|format(transaction.amount) }}</td>
+                    <td class="px-4 py-2 text-right">RM {{ "%.2f"|format(transaction.balance) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translate3d(0, -30px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-fade-in-down { animation: fadeInDown 0.8s ease-out; }
+.animate-fade-in { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+</style>
+{% endblock %}

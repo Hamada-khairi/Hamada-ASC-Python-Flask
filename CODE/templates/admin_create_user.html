@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Create New User{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-lg">
+    <h1 class="text-5xl font-bold text-purple-400 mb-8 text-center animate-fade-in-down">Create New User</h1>
+    
+    <form method="POST" action="{{ url_for('admin_create_user') }}" class="bg-gray-800 shadow-2xl rounded-2xl p-8 transition-all duration-300 hover:shadow-purple-500/50">
+        {{ form.hidden_tag() }}
+        
+        {% for field in [form.username, form.password, form.first_name, form.last_name, form.phone, form.city, form.email] %}
+        <div class="mb-6 animate-fade-in" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+            {{ field.label(class="block mb-2 text-lg font-medium text-purple-300") }}
+            {{ field(class="w-full px-4 py-3 rounded-xl border-2 border-purple-500 text-gray-200 bg-gray-700 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400 transition-all duration-300 hover:border-purple-400 placeholder-gray-500") }}
+            {% for error in field.errors %}
+                <p class="mt-2 text-sm text-red-400">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        
+        <div class="mb-6 animate-fade-in" style="animation-delay: 0.7s;">
+            {{ form.account_type.label(class="block mb-2 text-lg font-medium text-purple-300") }}
+            {{ form.account_type(class="w-full px-4 py-3 rounded-xl border-2 border-purple-500 text-gray-200 bg-gray-700 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400 transition-all duration-300 hover:border-purple-400") }}
+            {% for error in form.account_type.errors %}
+                <p class="mt-2 text-sm text-red-400">{{ error }}</p>
+            {% endfor %}
+        </div>
+        
+        <div class="mb-8 animate-fade-in" style="animation-delay: 0.8s;">
+            {{ form.age.label(class="block mb-2 text-lg font-medium text-purple-300") }}
+            {{ form.age(class="w-full px-4 py-3 rounded-xl border-2 border-purple-500 text-gray-200 bg-gray-700 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400 transition-all duration-300 hover:border-purple-400") }}
+            {% for error in form.age.errors %}
+                <p class="mt-2 text-sm text-red-400">{{ error }}</p>
+            {% endfor %}
+        </div>
+        
+        <div class="mb-8 animate-fade-in" style="animation-delay: 0.9s;">
+            <label class="flex items-center">
+                {{ form.is_admin(class="form-checkbox h-5 w-5 text-purple-600 transition duration-150 ease-in-out") }}
+                <span class="ml-2 text-lg text-purple-300">Is Admin User</span>
+            </label>
+            {% for error in form.is_admin.errors %}
+                <p class="mt-2 text-sm text-red-400">{{ error }}</p>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:shadow-lg animate-fade-in" style="animation-delay: 1s;">
+            Create User
+        </button>
+    </form>
+</div>
+
+<style>
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -30px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in-down {
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+input, select {
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    transform: scale(1.02);
+}
+</style>
+{% endblock %}

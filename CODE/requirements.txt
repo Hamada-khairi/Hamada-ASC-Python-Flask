@@ -1,0 +1,9 @@
+Flask==2.1.2
+Flask-SQLAlchemy==2.5.1
+Werkzeug==2.1.2
+flask-wtf==1.0.1
+wtforms==3.0.1
+Flask-Limiter==1.5.1
+pyjwt==2.1.0
+bleach==4.1.0
+cryptography==3.4.7

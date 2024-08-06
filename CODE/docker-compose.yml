@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=your_secret_key
+      - JWT_SECRET_KEY=your_jwt_secret_key
+    depends_on:
+      - db
+  db:
+    image: sqlite:latest
+    volumes:
+      - ./Hamadabank.db:/db/Hamadabank.db
