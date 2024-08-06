@@ -19,6 +19,11 @@
 
 Hamada Bank System is a robust and secure banking application built with Flask. It provides a comprehensive set of features for both users and administrators, ensuring secure transactions and efficient account management.
 
+
+https://github.com/user-attachments/assets/6a12117d-d5c6-4e40-8cea-22822fb40ea0
+
+
+---
 ## 🚀 Features
 
 - 👤 User Authentication and Authorization
